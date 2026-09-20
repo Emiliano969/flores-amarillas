@@ -1,0 +1,852 @@
+/* =====================================================
+   TOKENS
+===================================================== */
+
+:root {
+    --noche-1: #0c0820;
+    --noche-2: #06060f;
+    --noche-3: #010207;
+
+    --violeta: #6d4bd0;
+
+    --oro: #ffd230;
+    --oro-claro: #ffeb9c;
+    --oro-hondo: #b8790a;
+    --cafe: #6d3f00;
+
+    --papel: #fffdf3;
+    --tinta: #4a3403;
+
+    /* lado del cuadro donde vive la galaxia (todo se mide en % de esto) */
+    --campo: min(92vmin, 900px);
+
+    /* duración del vuelo de intro: script.js la sobreescribe */
+    --vuelo: 5600ms;
+
+    --display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    --mano: "Caveat", "Segoe Script", cursive;
+}
+
+
+/* =====================================================
+   BASE
+===================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    min-height: 100dvh;
+    overflow: hidden;
+    background: var(--noche-2);
+    color: #fff;
+    font-family: var(--display);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+}
+
+button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    cursor: pointer;
+}
+
+:focus-visible {
+    outline: 2px solid var(--oro-claro);
+    outline-offset: 4px;
+    border-radius: 6px;
+}
+
+.sprite {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.aviso {
+    position: absolute;
+    inset: auto 0 50% 0;
+    text-align: center;
+    font-size: 18px;
+}
+
+
+/* =====================================================
+   INTRO
+===================================================== */
+
+#intro {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    overflow: hidden;
+    background: #000;
+    opacity: 1;
+    transition: opacity .8s ease;
+}
+
+#intro.terminado {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#camara {
+    position: absolute;
+    inset: 0;
+    perspective: 600px;
+    transform-style: preserve-3d;
+    animation: vuelo var(--vuelo) cubic-bezier(.65, 0, .15, 1) forwards;
+}
+
+@keyframes vuelo {
+    0%   { transform: scale(1)    rotateZ(0deg)   rotateX(0deg); }
+    25%  { transform: scale(1.08) rotateZ(8deg)   rotateX(2deg); }
+    50%  { transform: scale(1.25) rotateZ(-12deg) rotateX(-4deg); }
+    72%  { transform: scale(2)    rotateZ(18deg)  rotateX(7deg); }
+    88%  { transform: scale(5)    rotateZ(-10deg) rotateX(-5deg); }
+    100% { transform: scale(12)   rotateZ(0deg)   rotateX(0deg); }
+}
+
+
+/* --- estrellas y partículas del viaje --- */
+
+#warpEstrellas,
+#warpParticulas {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.warpEstrella,
+.warpParticula {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border-radius: 50%;
+    animation-duration: var(--dur);
+    animation-delay: var(--retraso);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.warpEstrella {
+    width: 2px;
+    height: 2px;
+    background: #fff;
+    box-shadow: 0 0 6px #fff;
+    animation-name: viajeEstrella;
+}
+
+.warpParticula {
+    width: 4px;
+    height: 4px;
+    background: var(--oro);
+    box-shadow: 0 0 10px var(--oro);
+    animation-name: viajeParticula;
+}
+
+@keyframes viajeEstrella {
+    0%   { transform: rotate(var(--angulo)) translateY(0) scale(.1); opacity: 0; }
+    10%  { opacity: 1; }
+    100% { transform: rotate(var(--angulo)) translateY(1600px) scale(9); opacity: 0; }
+}
+
+@keyframes viajeParticula {
+    0%   { transform: rotate(var(--angulo)) translateY(0) scale(0); opacity: 0; }
+    15%  { opacity: 1; }
+    100% { transform: rotate(var(--angulo)) translateY(1300px) scale(4); opacity: 0; }
+}
+
+
+/* --- destino --- */
+
+.destino {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 260px;
+    height: 260px;
+    transform: translate(-50%, -50%) scale(.04);
+    animation: aparecerDestino calc(var(--vuelo) * .85) ease-in forwards;
+}
+
+@keyframes aparecerDestino {
+    0%   { transform: translate(-50%, -50%) scale(.03); opacity: 0; }
+    55%  { opacity: .5; }
+    80%  { opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.destino__brillo {
+    position: absolute;
+    inset: -100px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 215, 40, .8), rgba(255, 190, 0, .25), transparent 70%);
+    filter: blur(25px);
+}
+
+.anillo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border: 2px solid rgba(255, 215, 50, .7);
+    border-radius: 50%;
+}
+
+.anillo--1 {
+    width: 170px;
+    height: 170px;
+    animation: giroAnillo1 4s linear infinite;
+}
+
+.anillo--2 {
+    width: 210px;
+    height: 100px;
+    animation: giroAnillo2 3s linear infinite;
+}
+
+.anillo--3 {
+    width: 240px;
+    height: 120px;
+    animation: giroAnillo3 5s linear infinite;
+}
+
+@keyframes giroAnillo1 {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes giroAnillo2 {
+    from { transform: translate(-50%, -50%) rotateX(65deg) rotateZ(0deg); }
+    to   { transform: translate(-50%, -50%) rotateX(65deg) rotateZ(360deg); }
+}
+
+@keyframes giroAnillo3 {
+    from { transform: translate(-50%, -50%) rotateY(65deg) rotateZ(0deg); }
+    to   { transform: translate(-50%, -50%) rotateY(65deg) rotateZ(-360deg); }
+}
+
+.destino__flor {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 150px;
+    height: 150px;
+    transform: translate(-50%, -50%);
+    color: var(--oro);
+    filter: drop-shadow(0 0 18px rgba(255, 210, 48, .85));
+}
+
+.destino__flor::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 26%;
+    height: 26%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #9a5f00, #4d2900 70%);
+}
+
+
+/* --- texto y destello --- */
+
+.intro__texto {
+    position: absolute;
+    left: 50%;
+    bottom: calc(9% + env(safe-area-inset-bottom, 0px));
+    width: 90%;
+    transform: translateX(-50%);
+    text-align: center;
+    animation: textoIntro calc(var(--vuelo) * .9) ease forwards;
+}
+
+.intro__texto h1 {
+    font-size: clamp(30px, 6vw, 58px);
+    font-weight: 400;
+    letter-spacing: .01em;
+    text-shadow: 0 0 10px rgba(255, 255, 255, .6), 0 0 34px rgba(255, 210, 48, .8);
+}
+
+.intro__texto p {
+    margin-top: 10px;
+    font-size: clamp(15px, 2.4vw, 20px);
+    color: var(--oro-claro);
+}
+
+@keyframes textoIntro {
+    0%   { opacity: 0; transform: translateX(-50%) translateY(26px); }
+    20%  { opacity: 1; }
+    70%  { opacity: 1; }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-26px); }
+}
+
+#saltarIntro {
+    position: absolute;
+    right: calc(16px + env(safe-area-inset-right, 0px));
+    top: calc(16px + env(safe-area-inset-top, 0px));
+    padding: 10px 18px;
+    font-size: 15px;
+    color: rgba(255, 255, 255, .75);
+    border: 1px solid rgba(255, 220, 120, .35);
+    border-radius: 999px;
+    background: rgba(10, 10, 24, .45);
+}
+
+#saltarIntro:hover {
+    color: #fff;
+    border-color: rgba(255, 220, 120, .7);
+}
+
+#destello {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    opacity: 0;
+    pointer-events: none;
+    animation: destello var(--vuelo) ease forwards;
+}
+
+@keyframes destello {
+    0%, 88% { opacity: 0; }
+    94%     { opacity: .95; }
+    100%    { opacity: 0; }
+}
+
+
+/* =====================================================
+   UNIVERSO
+===================================================== */
+
+#universo {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 50% 54%, var(--noche-1) 0%, var(--noche-2) 45%, var(--noche-3) 100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.6s ease;
+}
+
+#universo.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+
+/* --- nebulosas --- */
+
+.nebulosa {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: .22;
+    animation: nebulosa 16s ease-in-out infinite alternate;
+}
+
+.nebulosa--1 {
+    width: 46vmax;
+    height: 46vmax;
+    left: -14vmax;
+    top: 6%;
+    background: var(--violeta);
+}
+
+.nebulosa--2 {
+    width: 40vmax;
+    height: 40vmax;
+    right: -12vmax;
+    bottom: -12vmax;
+    background: #ffb300;
+    animation-duration: 20s;
+}
+
+.nebulosa--3 {
+    width: 26vmax;
+    height: 26vmax;
+    left: 38%;
+    top: 34%;
+    background: #ffdd55;
+    opacity: .1;
+    animation-duration: 24s;
+}
+
+@keyframes nebulosa {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(6vmax, -5vmax) scale(1.2); }
+}
+
+
+/* --- cielo (3 capas, cada una son cientos de estrellas en un box-shadow) --- */
+
+#cielo {
+    position: absolute;
+    inset: 0;
+}
+
+.cielo__capa {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    animation: parpadeo 4s ease-in-out infinite alternate;
+}
+
+.cielo__capa[data-capa="2"] { animation-duration: 6s; animation-delay: -2s; }
+.cielo__capa[data-capa="3"] { animation-duration: 9s; animation-delay: -4s; }
+
+@keyframes parpadeo {
+    from { opacity: .35; }
+    to   { opacity: 1; }
+}
+
+
+/* --- título --- */
+
+.universo__titulo {
+    position: absolute;
+    left: 50%;
+    top: calc(6% + env(safe-area-inset-top, 0px));
+    width: min(90%, 640px);
+    transform: translateX(-50%);
+    text-align: center;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.universo__titulo h1 {
+    font-size: clamp(28px, 5.4vw, 56px);
+    font-weight: 400;
+    color: var(--oro-claro);
+    text-shadow: 0 0 12px rgba(255, 210, 48, .55), 0 0 40px rgba(255, 190, 0, .35);
+}
+
+.universo__titulo p {
+    margin-top: 8px;
+    font-size: clamp(14px, 2.2vw, 19px);
+    font-style: italic;
+    color: rgba(255, 255, 255, .72);
+}
+
+
+/* =====================================================
+   GALAXIA DE FLORES
+===================================================== */
+
+#galaxiaWrap {
+    position: absolute;
+    left: 50%;
+    top: 56%;
+    width: var(--campo);
+    height: var(--campo);
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+#galaxia {
+    position: absolute;
+    inset: 0;
+    animation: girarGalaxia 260s linear infinite;
+}
+
+@keyframes girarGalaxia {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+
+/* --- flor genérica --- */
+
+.flor {
+    position: absolute;
+    left: calc(var(--x) * 1%);
+    top: calc(var(--y) * 1%);
+    transform: translate(-50%, -50%) rotate(var(--giro, 0deg)) scale(var(--escala, 1));
+    transition: transform .35s cubic-bezier(.2, 1.3, .4, 1), filter .35s ease;
+}
+
+.flor__cuerpo {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    animation: flotar var(--flote, 5s) ease-in-out infinite alternate;
+    animation-delay: var(--floteRetraso, 0s);
+}
+
+.flor__svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+}
+
+.flor__cuerpo::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 26%;
+    height: 26%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: var(--centro, #8a5200);
+}
+
+@keyframes flotar {
+    from { transform: translateY(-7%) rotate(-5deg); }
+    to   { transform: translateY(9%) rotate(5deg); }
+}
+
+
+/* --- flores de fondo (la "polvareda" de la galaxia) --- */
+
+.flor--fondo {
+    width: calc(var(--tam) * 1vmin);
+    height: calc(var(--tam) * 1vmin);
+    color: var(--tono, #ffd968);
+    opacity: var(--opa, .5);
+    --centro: rgba(140, 86, 0, .85);
+}
+
+
+/* --- flores con carta --- */
+
+.flor--carta {
+    padding: 11px;
+    color: var(--oro);
+    filter: drop-shadow(0 0 7px rgba(255, 210, 48, .75));
+}
+
+.flor--carta .flor__cuerpo {
+    width: clamp(36px, 6.6vmin, 62px);
+    height: clamp(36px, 6.6vmin, 62px);
+    --centro: radial-gradient(circle at 35% 35%, #9a5f00, #532e00 72%);
+}
+
+.flor--carta .flor__cuerpo::after {
+    box-shadow: 0 0 9px rgba(255, 196, 40, .9);
+}
+
+.flor--carta:hover,
+.flor--carta:focus-visible {
+    --escala: 1.3;
+    filter: drop-shadow(0 0 12px #fff0a8) drop-shadow(0 0 26px var(--oro));
+}
+
+.flor--carta.leida {
+    color: #e9bf57;
+    filter: drop-shadow(0 0 4px rgba(233, 191, 87, .45));
+}
+
+.flor--carta.leida:hover,
+.flor--carta.leida:focus-visible {
+    filter: drop-shadow(0 0 10px #fff0a8);
+}
+
+
+/* --- núcleo --- */
+
+#nucleo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: clamp(90px, 16vmin, 150px);
+    height: clamp(90px, 16vmin, 150px);
+    transform: translate(-50%, -50%);
+    cursor: default;
+}
+
+.nucleo__brillo {
+    position: absolute;
+    inset: -40%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 210, 40, .38), transparent 70%);
+    animation: latido 4s ease-in-out infinite alternate;
+}
+
+@keyframes latido {
+    from { transform: scale(.85); opacity: .45; }
+    to   { transform: scale(1.25); opacity: .9; }
+}
+
+.nucleo__flor {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 52%;
+    height: 52%;
+    transform: translate(-50%, -50%);
+    color: var(--oro-claro);
+    filter: drop-shadow(0 0 14px var(--oro));
+    animation: giroNucleo 40s linear infinite;
+}
+
+@keyframes giroNucleo {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+#nucleo:not([disabled]) {
+    cursor: pointer;
+}
+
+#nucleo:not([disabled]) .nucleo__brillo {
+    background: radial-gradient(circle, rgba(255, 225, 90, .65), transparent 72%);
+}
+
+#nucleo:not([disabled]) .nucleo__flor {
+    width: 72%;
+    height: 72%;
+    filter: drop-shadow(0 0 22px #fff2b0) drop-shadow(0 0 44px var(--oro));
+    transition: width .8s ease, height .8s ease;
+}
+
+
+/* =====================================================
+   PIE Y MÚSICA
+===================================================== */
+
+.pie {
+    position: absolute;
+    left: 50%;
+    bottom: calc(4% + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.pie__instruccion {
+    font-size: clamp(14px, 2vw, 17px);
+    letter-spacing: .14em;
+    color: rgba(255, 255, 255, .85);
+    animation: respirar 2.6s ease-in-out infinite alternate;
+}
+
+.pie__progreso {
+    margin-top: 6px;
+    font-size: 13px;
+    letter-spacing: .08em;
+    color: rgba(255, 225, 130, .6);
+}
+
+@keyframes respirar {
+    from { opacity: .45; }
+    to   { opacity: 1; }
+}
+
+#botonMusica {
+    position: absolute;
+    right: calc(16px + env(safe-area-inset-right, 0px));
+    top: calc(16px + env(safe-area-inset-top, 0px));
+    z-index: 30;
+    padding: 10px 17px;
+    font-size: 15px;
+    border: 1px solid rgba(255, 220, 80, .45);
+    border-radius: 999px;
+    background: rgba(10, 10, 22, .55);
+    backdrop-filter: blur(10px);
+}
+
+#botonMusica[aria-pressed="true"] {
+    border-color: rgba(255, 220, 80, .9);
+    color: var(--oro-claro);
+}
+
+
+/* =====================================================
+   CARTA
+===================================================== */
+
+#carta {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: max(20px, env(safe-area-inset-top, 0px)) 20px max(20px, env(safe-area-inset-bottom, 0px));
+    background: rgba(2, 2, 8, .7);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .4s ease, visibility .4s ease;
+}
+
+#carta.abierta {
+    opacity: 1;
+    visibility: visible;
+}
+
+.sobre {
+    position: relative;
+    width: min(540px, 100%);
+    max-height: 100%;
+    overflow-y: auto;
+    padding: clamp(30px, 6vw, 48px) clamp(24px, 5vw, 40px);
+    color: var(--tinta);
+    text-align: center;
+    background:
+        radial-gradient(circle at 20% 0%, #fffef7, transparent 60%),
+        linear-gradient(150deg, var(--papel), #fdf3c8);
+    border-radius: 10px;
+    box-shadow: 0 0 34px rgba(255, 220, 60, .35), 0 24px 80px rgba(0, 0, 0, .55);
+    transform: translateY(34px) scale(.9);
+    transition: transform .5s cubic-bezier(.2, 1.4, .4, 1);
+}
+
+#carta.abierta .sobre {
+    transform: translateY(0) scale(1);
+}
+
+#cerrarCarta {
+    position: absolute;
+    right: 10px;
+    top: 4px;
+    width: 46px;
+    height: 46px;
+    font-size: 34px;
+    line-height: 1;
+    color: #8a6a10;
+}
+
+.sobre__icono {
+    font-size: clamp(38px, 8vw, 50px);
+    line-height: 1;
+}
+
+.sobre h2 {
+    margin-top: 10px;
+    font-size: clamp(22px, 4.5vw, 30px);
+    font-weight: 600;
+    color: #7a5a06;
+}
+
+.sobre__linea {
+    width: 64px;
+    height: 2px;
+    margin: 14px auto 24px;
+    background: linear-gradient(90deg, transparent, var(--oro-hondo), transparent);
+}
+
+#cartaTexto {
+    min-height: 5.6em;
+    font-size: clamp(18px, 3.4vw, 21px);
+    line-height: 1.75;
+}
+
+#cartaTexto::after {
+    content: "▌";
+    margin-left: 2px;
+    opacity: 0;
+    color: var(--oro-hondo);
+}
+
+#carta.escribiendo #cartaTexto::after {
+    opacity: 1;
+    animation: cursor .7s steps(1) infinite;
+}
+
+@keyframes cursor {
+    50% { opacity: 0; }
+}
+
+.sobre__flor {
+    margin-top: 18px;
+    font-size: 34px;
+}
+
+.sobre__firma {
+    margin-top: 6px;
+    font-family: var(--mano);
+    font-size: 26px;
+    color: #8b6800;
+}
+
+
+/* =====================================================
+   PANTALLAS CHICAS
+===================================================== */
+
+@media (max-width: 600px) {
+    :root {
+        --campo: min(96vmin, 560px);
+    }
+
+    .universo__titulo {
+        top: calc(5% + env(safe-area-inset-top, 0px));
+    }
+}
+
+
+/* =====================================================
+   MENOS MOVIMIENTO
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    #camara,
+    .destino,
+    .intro__texto,
+    #destello,
+    .warpEstrella,
+    .warpParticula,
+    .anillo,
+    .nebulosa,
+    .cielo__capa,
+    #galaxia,
+    .flor__cuerpo,
+    .nucleo__brillo,
+    .nucleo__flor,
+    .pie__instruccion {
+        animation: none !important;
+    }
+
+    .destino {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+
+    .intro__texto {
+        opacity: 1;
+    }
+
+    #intro,
+    #universo,
+    #carta,
+    .sobre,
+    .flor {
+        transition-duration: .01ms !important;
+    }
+}
